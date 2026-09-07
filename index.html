@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Alphonse — Where Art Finds Its People</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F8F4EB;
+    --ink:#181712;
+    --yellow:#F2BF2E;
+    --pink:#E23E78;
+    --teal:#26A9BC;
+    --card-line:#E6DFCE;
+    --muted:#726C5C;
+    --shadow-sm:0 2px 8px rgba(24,23,18,.05);
+    --shadow-md:0 10px 28px rgba(24,23,18,.08);
+    --ease:cubic-bezier(.4,0,.2,1);
+    --max:1180px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{ scroll-behavior:smooth; }
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Space Grotesk', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    line-height:1.5;
+  }
+  ::selection{ background:var(--yellow); color:var(--ink); }
+  a{ text-decoration:none; color:inherit; transition:color .18s var(--ease); }
+  button, .btn, .cta-primary, .cta-secondary{ transition:transform .18s var(--ease), box-shadow .18s var(--ease), background-color .18s var(--ease), border-color .18s var(--ease); cursor:pointer; font-family:inherit; }
+  .wrap{ max-width:var(--max); margin:0 auto; padding:0 40px; }
+
+  /* ---------- NAV ---------- */
+  header{
+    border-bottom:1px solid var(--card-line);
+    background:rgba(248,244,235,.92);
+    backdrop-filter:saturate(140%) blur(6px);
+    position:sticky; top:0; z-index:20;
+  }
+  nav.wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    height:84px;
+  }
+  .logo{
+    display:flex; align-items:center; gap:10px;
+    font-weight:700; font-size:1.4rem; letter-spacing:-.01em;
+  }
+  .logo svg{ width:28px; height:28px; flex-shrink:0; }
+  .logo .tag{
+    display:block; font-weight:500; font-size:.6rem;
+    letter-spacing:.08em; color:var(--muted); margin-top:2px;
+  }
+  .nav-links{ display:flex; gap:34px; font-weight:500; font-size:.96rem; }
+  .nav-links a{ position:relative; padding-bottom:6px; }
+  .nav-links a.active{ border-bottom:2.5px solid var(--yellow); }
+  .nav-links a:hover{ color:var(--pink); }
+  .nav-right{ display:flex; align-items:center; gap:14px; }
+  .icon-btn{
+    width:40px; height:40px; border-radius:50%; border:1px solid var(--card-line);
+    display:flex; align-items:center; justify-content:center; background:#fff;
+    box-shadow:var(--shadow-sm); flex-shrink:0;
+  }
+  .icon-btn:hover{ border-color:var(--ink); }
+  .icon-btn.search-toggle{ border:none; background:transparent; box-shadow:none; }
+  .icon-btn.search-toggle .search-icon{ width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#dff3f5,#f9e6ef); box-shadow:var(--shadow-sm); }
+  .icon-btn.search-toggle svg{ width:17px; height:17px; }
+  .icon-btn.search-toggle:hover .search-icon{ box-shadow:var(--shadow-md); }
+
+  .search-bar{ max-height:0; overflow:hidden; background:#fff; border-bottom:1px solid var(--card-line); transition:max-height .3s var(--ease), padding .3s var(--ease); }
+  .search-bar.open{ max-height:90px; padding:16px 0; overflow:visible; }
+  .search-bar-inner{ position:relative; }
+  .search-bar input{ width:100%; padding:13px 20px 13px 46px; border-radius:999px; border:1.5px solid var(--card-line); font-family:inherit; font-size:.95rem; background:var(--cream); }
+  .search-bar input:focus{ outline:none; border-color:var(--ink); }
+  .search-bar-inner svg{ position:absolute; left:18px; top:50%; transform:translateY(-50%); width:16px; height:16px; opacity:.5; }
+  .no-results{ display:none; text-align:center; padding:40px 0; color:var(--muted); font-size:.95rem; }
+  .no-results.show{ display:block; }
+
+  .search-suggestions{
+    position:absolute; left:0; right:0; top:calc(100% + 8px);
+    background:#fff; border:1px solid var(--card-line); border-radius:16px;
+    box-shadow:var(--shadow-md); overflow:hidden; z-index:30; display:none;
+  }
+  .search-suggestions.show{ display:block; }
+  .suggestion-item{
+    display:flex; align-items:center; gap:12px; padding:11px 18px; cursor:pointer;
+    border-bottom:1px solid var(--card-line);
+  }
+  .suggestion-item:last-child{ border-bottom:none; }
+  .suggestion-item:hover, .suggestion-item.active{ background:var(--cream); }
+  .suggestion-swatch{ width:34px; height:34px; border-radius:9px; flex-shrink:0; }
+  .suggestion-text .s-title{ font-weight:600; font-size:.9rem; }
+  .suggestion-text .s-meta{ font-size:.76rem; color:var(--muted); margin-top:1px; }
+  .suggestion-empty{ padding:16px 18px; color:var(--muted); font-size:.88rem; }
+  .btn{
+    padding:10px 22px; border-radius:999px; font-weight:600; font-size:.9rem;
+    border:1.5px solid var(--ink); letter-spacing:.01em;
+  }
+  .btn-ghost{ background:transparent; }
+  .btn-ghost:hover{ background:var(--ink); color:var(--cream); }
+  .btn-solid{ background:var(--yellow); border-color:var(--yellow); box-shadow:var(--shadow-sm); }
+  .btn-solid:hover{ transform:translateY(-1px); box-shadow:var(--shadow-md); }
+
+  .hamburger{ display:none; width:40px; height:40px; flex-direction:column; align-items:center; justify-content:center; gap:5px; border:none; background:none; flex-shrink:0; }
+  .hamburger span{ width:20px; height:2.2px; background:var(--ink); border-radius:2px; }
+
+  .mobile-menu{
+    display:none; flex-direction:column; gap:2px; padding:6px 20px 20px; border-bottom:1px solid var(--card-line);
+  }
+  .mobile-menu.open{ display:flex; }
+  .mobile-menu a{ padding:13px 0; font-weight:500; border-bottom:1px solid #efe9da; }
+  .mobile-menu a.active{ color:var(--pink); font-weight:700; }
+  .mobile-menu .btn-row{ display:flex; gap:10px; margin-top:16px; }
+  .mobile-menu .btn{ flex:1; text-align:center; }
+
+  /* ---------- HERO ---------- */
+  .hero{ position:relative; overflow:hidden; padding:70px 0 60px; }
+  .hero .wrap{ display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center; }
+  .hero h1{
+    font-family:'Kalam', cursive;
+    font-size:3.6rem; line-height:1.08; font-weight:700; letter-spacing:-.01em;
+  }
+  .hero h1 .pink{ color:var(--pink); }
+  .hero h1 .yellow-mark{ background:var(--yellow); padding:1px 8px; border-radius:4px; }
+  .hero p.lede{
+    margin-top:22px; max-width:480px; font-size:1.05rem; color:var(--muted); line-height:1.65;
+  }
+  .hero .cta-row{ margin-top:32px; display:flex; gap:16px; }
+  .cta-primary{
+    background:var(--yellow); border:1.5px solid var(--ink);
+    padding:14px 26px; border-radius:999px; font-weight:700; display:inline-flex; align-items:center; gap:8px;
+    box-shadow:var(--shadow-sm);
+  }
+  .cta-primary:hover{ transform:translateY(-2px); box-shadow:var(--shadow-md); }
+  .cta-secondary{
+    background:transparent; border:1.5px solid var(--ink);
+    padding:14px 26px; border-radius:999px; font-weight:700;
+  }
+  .cta-secondary:hover{ background:var(--ink); color:var(--cream); }
+  .social-proof{ margin-top:36px; display:flex; align-items:center; gap:14px; }
+  .avatars{ display:flex; }
+  .avatars span{
+    width:34px; height:34px; border-radius:50%; border:2.5px solid var(--cream);
+    margin-left:-10px; display:inline-block; box-shadow:var(--shadow-sm);
+  }
+  .avatars span:first-child{ margin-left:0; }
+  .social-proof small{ font-size:.85rem; color:var(--muted); font-weight:500; }
+
+  .hero-art{
+    position:relative; aspect-ratio:1/0.85;
+    border-radius:28px;
+    background:
+      radial-gradient(circle at 75% 20%, #ffe9a8 0%, transparent 45%),
+      linear-gradient(160deg, #dff3f5 0%, #f7f3ea 60%);
+    display:flex; align-items:flex-end; justify-content:center;
+    overflow:hidden;
+    border:1px solid var(--card-line);
+    box-shadow:var(--shadow-md);
+  }
+  .hero-art svg{ width:100%; height:100%; }
+  .hero-badge{
+    position:absolute; top:22px; right:22px; background:#fff; border:1px solid var(--card-line);
+    padding:10px 14px; border-radius:14px; font-family:'Kalam'; font-size:.95rem; text-align:center; line-height:1.3;
+    box-shadow:var(--shadow-md);
+  }
+
+  /* ---------- GALLERY ---------- */
+  .section{ padding:76px 0; }
+  .section-head{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px;}
+  .eyebrow{ font-size:.82rem; letter-spacing:.02em; color:var(--pink); font-weight:600; }
+  .section h2{ font-family:'Kalam'; font-size:2.4rem; margin-top:6px; letter-spacing:-.01em; }
+  .section-desc{ max-width:560px; color:var(--muted); margin-top:14px; line-height:1.6; }
+  .view-all{ font-weight:600; border-bottom:2px solid var(--teal); padding-bottom:3px; white-space:nowrap; }
+  .view-all:hover{ color:var(--teal); }
+
+  .filters{ display:flex; gap:10px; margin:36px 0 32px; flex-wrap:wrap; }
+  .filters button{
+    padding:9px 20px; border-radius:999px; border:1.5px solid var(--ink); background:transparent;
+    font-weight:600; font-size:.88rem;
+  }
+  .filters button:hover{ border-color:var(--pink); color:var(--pink); }
+  .filters button.active{ background:var(--ink); color:var(--cream); border-color:var(--ink); }
+  .filters button.active:hover{ color:var(--cream); }
+
+  .gallery-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:24px; }
+  .art-card{ display:flex; flex-direction:column; gap:10px; transition:opacity .25s var(--ease), transform .25s var(--ease); }
+  .art-card.hide{ display:none; }
+  .art-thumb{
+    aspect-ratio:1/1.05; border-radius:16px; border:1px solid var(--card-line);
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+    box-shadow:var(--shadow-sm); transition:box-shadow .2s var(--ease), transform .2s var(--ease);
+  }
+  .art-card:hover .art-thumb{ box-shadow:var(--shadow-md); transform:translateY(-3px); }
+  .art-thumb svg{ width:100%; height:100%; }
+  .art-meta{ display:flex; justify-content:space-between; align-items:flex-start; }
+  .art-title{ font-weight:600; font-size:.97rem; }
+  .art-author{ font-size:.81rem; color:var(--muted); margin-top:2px; }
+  .likes{ font-size:.84rem; display:flex; align-items:center; gap:5px; color:var(--muted); white-space:nowrap; }
+
+  .like-btn{ display:flex; align-items:center; gap:5px; background:none; border:none; font-family:inherit; font-size:.84rem; color:var(--muted); cursor:pointer; padding:2px; white-space:nowrap; }
+  .like-btn .heart-icon{ width:16px; height:16px; fill:none; stroke:var(--muted); stroke-width:2; transition:fill .18s var(--ease), stroke .18s var(--ease), transform .18s var(--ease); }
+  .like-btn.liked{ color:var(--pink); }
+  .like-btn.liked .heart-icon{ fill:var(--pink); stroke:var(--pink); }
+  .like-btn:active .heart-icon{ transform:scale(1.3); }
+
+  /* ---------- ART DETAIL MODAL ---------- */
+  .art-modal-overlay{ position:fixed; inset:0; background:rgba(24,23,18,.55); display:none; align-items:center; justify-content:center; z-index:100; padding:20px; }
+  .art-modal-overlay.show{ display:flex; }
+  .art-modal{ background:#fff; border-radius:22px; max-width:640px; width:100%; max-height:88vh; overflow-y:auto; position:relative; box-shadow:var(--shadow-md); }
+  .art-modal-close{ position:absolute; top:14px; right:14px; width:34px; height:34px; border-radius:50%; border:1px solid var(--card-line); background:#fff; cursor:pointer; font-size:1rem; z-index:2; }
+  .art-modal-close:hover{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .art-modal-media{ width:100%; aspect-ratio:16/11; border-radius:22px 22px 0 0; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+  .art-modal-media svg{ width:100%; height:100%; }
+  .art-modal-body{ padding:24px 26px 28px; }
+  .art-modal-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; }
+  .art-modal-top h3{ font-family:'Kalam'; font-size:1.5rem; letter-spacing:-.01em; }
+  .art-modal-author{ display:flex; align-items:center; gap:8px; margin-top:10px; font-size:.88rem; color:var(--muted); }
+  .avatar{ width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.68rem; font-weight:700; color:#fff; flex-shrink:0; }
+  .modal-like{ font-size:.95rem; flex-shrink:0; }
+  .modal-like .heart-icon{ width:19px; height:19px; }
+  .art-modal-desc{ margin-top:16px; color:#3d3a32; line-height:1.6; font-size:.95rem; }
+  .art-modal-meta{ margin-top:14px; display:flex; gap:10px; align-items:center; font-size:.8rem; color:var(--muted); flex-wrap:wrap; }
+  .art-modal-tag{ padding:4px 12px; border-radius:999px; background:var(--cream); font-weight:600; text-transform:capitalize; }
+  .art-modal-actions{ display:flex; gap:10px; margin-top:20px; }
+  .modal-action-btn{ flex:1; padding:11px; border-radius:999px; border:1.5px solid var(--ink); background:transparent; font-family:inherit; font-weight:600; font-size:.87rem; cursor:pointer; transition:background .18s var(--ease), color .18s var(--ease); }
+  .modal-action-btn:hover{ background:var(--ink); color:var(--cream); }
+  .modal-action-btn.reported{ background:var(--pink); border-color:var(--pink); color:#fff; cursor:default; }
+  .art-modal-comments{ margin-top:18px; display:none; border-top:1px solid var(--card-line); padding-top:16px; }
+  .art-modal-comments.show{ display:block; }
+  .comment-item{ display:flex; gap:10px; margin-bottom:12px; font-size:.85rem; }
+  .comment-item .c-body{ background:var(--cream); padding:8px 12px; border-radius:12px; line-height:1.45; }
+  .comment-item .c-name{ font-weight:700; margin-right:5px; }
+  .comment-input-row{ display:flex; gap:8px; margin-top:4px; }
+  .comment-input-row input{ flex:1; padding:10px 14px; border-radius:999px; border:1.5px solid var(--card-line); font-family:inherit; font-size:.85rem; background:var(--cream); }
+  .comment-input-row input:focus{ outline:none; border-color:var(--ink); }
+  .comment-input-row button{ padding:10px 18px; border-radius:999px; background:var(--yellow); border:none; font-family:inherit; font-weight:700; font-size:.83rem; cursor:pointer; }
+
+  @media (max-width: 640px){
+    .art-modal{ border-radius:18px; max-height:92vh; }
+    .art-modal-media{ border-radius:18px 18px 0 0; }
+    .art-modal-body{ padding:20px 18px 24px; }
+    .art-modal-top h3{ font-size:1.3rem; }
+  }
+
+  .like-btn{ display:flex; align-items:center; gap:5px; background:none; border:none; padding:2px; font-family:inherit; font-size:.84rem; color:var(--muted); cursor:pointer; white-space:nowrap; }
+  .like-btn .heart-icon{ width:16px; height:16px; fill:none; stroke:var(--muted); stroke-width:2; transition:transform .18s var(--ease), fill .18s var(--ease), stroke .18s var(--ease); }
+  .like-btn:active .heart-icon{ transform:scale(1.3); }
+  .like-btn.liked{ color:var(--pink); }
+  .like-btn.liked .heart-icon{ fill:var(--pink); stroke:var(--pink); }
+
+  /* ---------- ART DETAIL MODAL ---------- */
+  .art-modal-overlay{
+    position:fixed; inset:0; background:rgba(24,23,18,.55); backdrop-filter:blur(2px);
+    z-index:100; display:none; align-items:center; justify-content:center; padding:20px;
+  }
+  .art-modal-overlay.open{ display:flex; }
+  .art-modal{
+    background:#fff; border-radius:24px; max-width:780px; width:100%; max-height:88vh;
+    overflow-y:auto; display:grid; grid-template-columns:1fr 1.1fr; position:relative;
+    box-shadow:var(--shadow-md);
+  }
+  .art-modal-close{
+    position:absolute; top:14px; right:14px; width:34px; height:34px; border-radius:50%;
+    border:1px solid var(--card-line); background:#fff; cursor:pointer; font-size:1rem; z-index:2;
+  }
+  .art-modal-media{ position:relative; }
+  .art-modal-media svg{ width:100%; height:100%; display:block; }
+  .art-modal-body{ padding:30px; display:flex; flex-direction:column; gap:16px; }
+  .art-modal-header{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+  .art-modal-header h3{ font-family:'Kalam'; font-size:1.55rem; letter-spacing:-.01em; }
+  .art-modal-meta{ display:flex; align-items:center; gap:10px; margin-top:12px; }
+  .art-modal-author-avatar{ width:36px; height:36px; border-radius:50%; flex-shrink:0; }
+  .art-modal-author{ font-weight:600; font-size:.92rem; }
+  .art-modal-date{ font-size:.78rem; color:var(--muted); margin-top:1px; }
+  .art-modal-tag{ font-size:.74rem; font-weight:600; text-transform:capitalize; background:var(--cream); padding:6px 13px; border-radius:999px; white-space:nowrap; }
+  .art-modal-desc{ font-size:.92rem; color:var(--muted); line-height:1.65; }
+  .art-modal-actions{ display:flex; gap:10px; border-top:1px solid var(--card-line); border-bottom:1px solid var(--card-line); padding:14px 0; flex-wrap:wrap; }
+  .modal-action{ display:flex; align-items:center; gap:6px; padding:9px 16px; border-radius:999px; border:1.5px solid var(--card-line); background:transparent; font-family:inherit; font-weight:600; font-size:.85rem; cursor:pointer; color:var(--ink); }
+  .modal-action svg{ width:17px; height:17px; }
+  .modal-action.like-action.liked{ border-color:var(--pink); color:var(--pink); }
+  .modal-action.like-action.liked svg{ fill:var(--pink); stroke:var(--pink); }
+  .modal-action.report-action.reported{ border-color:#c0392b; color:#c0392b; }
+  .art-modal-comment-box{ display:none; flex-direction:column; gap:10px; }
+  .art-modal-comment-box.open{ display:flex; }
+  .art-modal-comment-box textarea{ resize:none; min-height:64px; border:1.5px solid var(--card-line); border-radius:14px; padding:12px 14px; font-family:inherit; font-size:.88rem; background:var(--cream); }
+  .art-modal-comment-box textarea:focus{ outline:none; border-color:var(--ink); }
+  .art-modal-comment-box button{ align-self:flex-end; background:var(--yellow); border:1.5px solid var(--ink); padding:8px 18px; border-radius:999px; font-family:inherit; font-weight:700; font-size:.85rem; cursor:pointer; }
+  .comment-list{ display:flex; flex-direction:column; gap:8px; }
+  .comment-item{ background:var(--cream); border-radius:12px; padding:9px 14px; font-size:.85rem; line-height:1.4; }
+  .comment-item b{ font-weight:600; }
+
+  @media (max-width: 860px){
+    .art-modal{ grid-template-columns:1fr; max-height:92vh; }
+    .art-modal-media{ aspect-ratio:4/3; }
+    .art-modal-body{ padding:22px; }
+  }
+
+  /* ---------- COMMUNITY ---------- */
+  .community{ background:#fff; border-top:1px solid var(--card-line); border-bottom:1px solid var(--card-line); }
+  .community-top{ display:grid; grid-template-columns:1.1fr 1fr; gap:40px; align-items:end; padding-top:76px; }
+  .community h2{ font-family:'Kalam'; font-size:2.4rem; letter-spacing:-.01em; }
+  .community-top p{ color:var(--muted); margin-top:14px; line-height:1.6; max-width:460px; }
+  .join-btn{ justify-self:end; }
+  .feature-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:28px; padding:48px 0 76px; }
+  .feature{ display:flex; flex-direction:column; gap:12px; }
+  .feature .ic{ width:40px; height:40px; padding:9px; border-radius:12px; background:var(--cream); }
+  .feature h3{ font-weight:700; font-size:1.03rem; }
+  .feature p{ font-size:.89rem; color:var(--muted); line-height:1.5; }
+
+  /* ---------- FOOTER ---------- */
+  footer{ background:var(--ink); color:#EDEAE0; padding:64px 0 26px; }
+  .footer-grid{ display:grid; grid-template-columns:1.6fr 1fr 1fr 1.3fr; gap:30px; }
+  .footer-logo{ display:flex; align-items:center; gap:10px; font-weight:700; font-size:1.25rem; }
+  footer p.about{ margin-top:12px; color:#a49f8e; font-size:.9rem; max-width:260px; line-height:1.55;}
+  .footer-col h4{ font-family:'Kalam'; font-size:1.05rem; margin-bottom:18px; letter-spacing:-.005em; }
+  .footer-col a{ display:block; color:#c9c5b8; font-size:.9rem; margin-bottom:11px; transition:color .15s var(--ease); }
+  .footer-col a:hover{ color:var(--yellow); }
+  .subscribe{ display:flex; margin-top:14px; border:1px solid #38372f; border-radius:999px; overflow:hidden; background:#1e1d18; }
+  .subscribe input{ flex:1; background:transparent; border:none; padding:12px 16px; color:#fff; font-family:inherit; font-size:.9rem; min-width:0; }
+  .subscribe input::placeholder{ color:#7d7869; }
+  .subscribe input:focus{ outline:none; }
+  .subscribe button{ background:var(--yellow); border:none; padding:0 18px; font-size:1rem; }
+  .subscribe button:hover{ background:var(--pink); color:#fff; }
+  .footer-bottom{ display:flex; justify-content:space-between; align-items:center; margin-top:54px; padding-top:24px; border-top:1px solid #2b2a25; font-size:.82rem; color:#8a8578; }
+  .social-icons{ display:flex; gap:12px; margin-top:18px; }
+  .social-icons span{ width:32px; height:32px; border-radius:9px; background:#232219; display:inline-flex; align-items:center; justify-content:center; font-size:.78rem; color:#c9c5b8; transition:background .15s var(--ease), color .15s var(--ease); }
+  .social-icons span:hover{ background:var(--yellow); color:var(--ink); }
+
+  /* ================= RESPONSIVE (mobile) ================= */
+  @media (max-width: 860px){
+    .wrap{ padding:0 20px; }
+
+    .nav-links{ display:none; }
+    .nav-right .btn{ display:none; }
+    .hamburger{ display:flex; }
+    nav.wrap{ height:64px; }
+    .logo{ font-size:1.08rem; }
+    .logo svg{ width:24px; height:24px; }
+    .icon-btn{ width:36px; height:36px; font-size:.9rem; }
+
+    .hero{ padding:36px 0 32px; }
+    .hero .wrap{ grid-template-columns:1fr; gap:0; }
+    .hero h1{ font-size:2.5rem; }
+    .hero p.lede{ margin-top:16px; font-size:.97rem; max-width:none; }
+    .hero .cta-row{ margin-top:24px; flex-direction:column; gap:12px; }
+    .social-proof{ margin-top:24px; }
+
+    .hero-art{ margin-top:28px; aspect-ratio:1/0.9; border-radius:22px; }
+    .hero-badge{ top:14px; right:14px; padding:8px 11px; border-radius:12px; font-size:.79rem; }
+
+    .section{ padding:48px 0; }
+    .section h2{ font-size:1.9rem; }
+    .section-head{ flex-direction:column; align-items:flex-start; gap:4px; }
+    .section-desc{ margin-top:10px; font-size:.92rem; }
+    .view-all{ margin-top:14px; font-size:.89rem; }
+
+    .filters{ margin:24px 0 22px; flex-wrap:nowrap; overflow-x:auto; padding-bottom:4px; scrollbar-width:none; }
+    .filters::-webkit-scrollbar{ display:none; }
+    .filters button{ flex:0 0 auto; padding:8px 16px; font-size:.82rem; }
+
+    .gallery-grid{ grid-template-columns:1fr 1fr; gap:16px; }
+    .art-title{ font-size:.85rem; }
+    .art-author{ font-size:.73rem; }
+    .likes{ font-size:.75rem; }
+
+    .community-top{ grid-template-columns:1fr; padding-top:48px; gap:16px; }
+    .community h2{ font-size:1.9rem; }
+    .join-btn{ justify-self:stretch; width:100%; padding:14px; }
+    .feature-grid{ grid-template-columns:1fr 1fr; gap:24px; padding:38px 0 48px; }
+    .feature h3{ font-size:.94rem; }
+    .feature p{ font-size:.81rem; }
+    .feature .ic{ width:32px; height:32px; }
+
+    footer{ padding:48px 0 24px; }
+    .footer-grid{ grid-template-columns:1fr; gap:0; }
+    .footer-col{ margin-top:32px; }
+    .footer-logo{ font-size:1.08rem; }
+    footer p.about{ font-size:.85rem; }
+    .footer-bottom{ flex-direction:column; align-items:flex-start; gap:6px; margin-top:38px; padding-top:20px; font-size:.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <a href="#" class="logo">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 20L18 6M18 6L13 6M18 6L18 11" stroke="var(--pink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Alphonse<span class="tag">CREATE · SHARE · BELONG</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="#" class="active">Home</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="#community">Community</a>
+      <a href="#">Events</a>
+      <a href="#">About</a>
+    </div>
+    <div class="nav-right">
+      <button class="icon-btn search-toggle" id="searchToggle" aria-label="Search">
+        <span class="search-icon">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5" stroke="var(--pink)" stroke-width="2"/><path d="M20 20L15.8 15.8" stroke="var(--teal)" stroke-width="2" stroke-linecap="round"/></svg>
+        </span>
+      </button>
+      <button class="btn btn-ghost">Log in</button>
+      <button class="btn btn-solid">Sign up</button>
+      <button class="hamburger" onclick="document.getElementById('menu').classList.toggle('open')" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="menu">
+    <a href="#" class="active">Home</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="#community">Community</a>
+    <a href="#">Events</a>
+    <a href="#">About</a>
+    <div class="btn-row">
+      <button class="btn btn-ghost">Log in</button>
+      <button class="btn btn-solid">Sign up</button>
+    </div>
+  </div>
+</header>
+
+<div class="search-bar" id="searchBar">
+  <div class="wrap search-bar-inner">
+    <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5" stroke="var(--ink)" stroke-width="2"/><path d="M20 20L15.8 15.8" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/></svg>
+    <input type="text" id="searchInput" placeholder="Search art, artist, or style..." autocomplete="off">
+    <div class="search-suggestions" id="searchSuggestions"></div>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1>Where Art<br><span class="pink">Finds</span> <span class="yellow-mark">Its</span> People</h1>
+      <p class="lede">Alphonse is a creative home for artists, dreamers and art lovers. Share your work, discover art that moves you, and become part of something worth belonging to.</p>
+      <div class="cta-row">
+        <a class="cta-primary" href="gallery.html">Explore gallery →</a>
+        <a class="cta-secondary" href="#community">Join community</a>
+      </div>
+      <div class="social-proof">
+        <div class="avatars">
+          <span style="background:#F4B183"></span>
+          <span style="background:#9AD1D4"></span>
+          <span style="background:#E39FC2"></span>
+          <span style="background:#C9C070"></span>
+        </div>
+        <small>10K+ creators &amp; art lovers already here</small>
+      </div>
+    </div>
+
+    <div class="hero-art">
+      <svg viewBox="0 0 400 340" preserveAspectRatio="xMidYMax slice">
+        <ellipse cx="200" cy="300" rx="190" ry="30" fill="#eadfc4" opacity=".5"/>
+        <g>
+          <rect x="150" y="120" width="90" height="120" rx="10" fill="#d8cdae"/>
+          <circle cx="195" cy="105" r="34" fill="#3a2f24"/>
+          <path d="M150 190 q45 25 90 0" stroke="#3a2f24" stroke-width="6" fill="none" stroke-linecap="round"/>
+        </g>
+        <circle cx="120" cy="255" r="14" fill="#2b2b2b"/>
+        <path d="M110 246 l-6 -8 M130 246 l6 -8" stroke="#2b2b2b" stroke-width="3" stroke-linecap="round"/>
+        <path d="M40 60 Q120 20 200 45 T360 40" stroke="var(--teal)" stroke-width="10" fill="none" opacity=".55" stroke-linecap="round"/>
+        <path d="M20 260 Q90 230 60 300" stroke="var(--pink)" stroke-width="8" fill="none" opacity=".5" stroke-linecap="round"/>
+        <circle cx="330" cy="70" r="26" fill="var(--yellow)" opacity=".6"/>
+      </svg>
+      <div class="hero-badge">Different styles<br>One passion</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="gallery">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">Featured</div>
+        <h2>Art Gallery</h2>
+        <p class="section-desc">Explore a world of creativity — from detailed sketches to imaginative illustrations. Find art that speaks to you.</p>
+      </div>
+      <a class="view-all" href="gallery.html">View all →</a>
+    </div>
+
+    <div class="filters">
+      <button class="active" data-filter="all">All</button>
+      <button data-filter="sketches">Sketches</button>
+      <button data-filter="illustrations">Illustrations</button>
+      <button data-filter="anime">Anime</button>
+      <button data-filter="nature">Nature</button>
+      <button data-filter="portraits">Portraits</button>
+      <button data-filter="digital">Digital</button>
+    </div>
+
+    <div class="gallery-grid">
+      <div class="art-card" id="art-quiet-thoughts" data-tag="sketches" data-description="A quiet study of stillness and introspection, drawn in soft graphite strokes." data-posted="3 Jun 2026, 8:14 PM IST">
+        <div class="art-thumb" style="background:#efe3e0"><svg viewBox="0 0 100 100"><circle cx="50" cy="40" r="24" fill="#c98d6f"/><rect x="26" y="62" width="48" height="38" rx="10" fill="#7a6a5a"/></svg></div>
+        <div class="art-meta"><div><div class="art-title">Quiet Thoughts</div><div class="art-author">by LithaSketches</div></div><button class="like-btn" data-id="art-quiet-thoughts"><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9C0.5 8 2 4 6 4c2.2 0 3.8 1.3 6 3.7C14.2 5.3 15.8 4 18 4c4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg><span class="like-count">342</span></button></div>
+      </div>
+      <div class="art-card" id="art-hidden-lake" data-tag="nature" data-description="A tranquil lake tucked between misty peaks, painted during a weekend hiking trip." data-posted="18 May 2026, 6:02 PM IST">
+        <div class="art-thumb" style="background:#dcecef"><svg viewBox="0 0 100 100"><polygon points="10,80 40,30 55,55 70,20 95,80" fill="#7fb0c9"/><rect y="80" width="100" height="20" fill="#a7d8dc"/></svg></div>
+        <div class="art-meta"><div><div class="art-title">Hidden Lake</div><div class="art-author">by ArteMori</div></div><button class="like-btn" data-id="art-hidden-lake"><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9C0.5 8 2 4 6 4c2.2 0 3.8 1.3 6 3.7C14.2 5.3 15.8 4 18 4c4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg><span class="like-count">281</span></button></div>
+      </div>
+      <div class="art-card" id="art-the-lost-princess" data-tag="anime" data-description="An original character piece exploring flowing hair and fantasy costume design." data-posted="27 Jul 2026, 11:30 AM IST">
+        <div class="art-thumb" style="background:#f3e6ee"><svg viewBox="0 0 100 100"><circle cx="50" cy="42" r="26" fill="#e6c2a8"/><path d="M24 42 Q50 5 76 42" fill="#5b4636"/></svg></div>
+        <div class="art-meta"><div><div class="art-title">The Lost Princess</div><div class="art-author">by KazeDraws</div></div><button class="like-btn" data-id="art-the-lost-princess"><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9C0.5 8 2 4 6 4c2.2 0 3.8 1.3 6 3.7C14.2 5.3 15.8 4 18 4c4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg><span class="like-count">519</span></button></div>
+      </div>
+      <div class="art-card" id="art-in-the-details" data-tag="portraits" data-description="A hyper-focused study of the human eye, done entirely in colored pencil." data-posted="9 Jan 2026, 4:47 PM IST">
+        <div class="art-thumb" style="background:#eee9df"><svg viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="34" ry="22" fill="#fff"/><circle cx="50" cy="50" r="12" fill="#3f7f8f"/><circle cx="50" cy="50" r="5" fill="#111"/></svg></div>
+        <div class="art-meta"><div><div class="art-title">In the Details</div><div class="art-author">by PencilSoul</div></div><button class="like-btn" data-id="art-in-the-details"><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9C0.5 8 2 4 6 4c2.2 0 3.8 1.3 6 3.7C14.2 5.3 15.8 4 18 4c4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg><span class="like-count">410</span></button></div>
+      </div>
+      <div class="art-card" id="art-old-town-vibes" data-tag="illustrations" data-description="Cobblestone streets and pastel facades inspired by a trip through the old town." data-posted="22 Feb 2026, 2:15 PM IST">
+        <div class="art-thumb" style="background:#f2ece0"><svg viewBox="0 0 100 100"><rect x="10" y="30" width="20" height="60" fill="#d7a86e"/><rect x="35" y="20" width="20" height="70" fill="#c98d6f"/><rect x="60" y="40" width="20" height="50" fill="#dbb98a"/></svg></div>
+        <div class="art-meta"><div><div class="art-title">Old Town Vibes</div><div class="art-author">by SketchyRin</div></div><button class="like-btn" data-id="art-old-town-vibes"><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9C0.5 8 2 4 6 4c2.2 0 3.8 1.3 6 3.7C14.2 5.3 15.8 4 18 4c4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg><span class="like-count">276</span></button></div>
+      </div>
+      <div class="art-card" id="art-simple-beauty" data-tag="illustrations" data-description="A still life of wildflowers in a ceramic jug, painted in gouache." data-posted="14 Apr 2026, 9:40 AM IST">
+        <div class="art-thumb" style="background:#fdf1e6"><svg viewBox="0 0 100 100"><rect x="38" y="55" width="24" height="35" rx="4" fill="#e8dcc8"/><circle cx="42" cy="45" r="10" fill="#e8a1c4"/><circle cx="55" cy="40" r="10" fill="#f4c21b"/><circle cx="60" cy="52" r="9" fill="#2cb6c9"/></svg></div>
+        <div class="art-meta"><div><div class="art-title">Simple Beauty</div><div class="art-author">by LeafArt</div></div><button class="like-btn" data-id="art-simple-beauty"><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9C0.5 8 2 4 6 4c2.2 0 3.8 1.3 6 3.7C14.2 5.3 15.8 4 18 4c4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg><span class="like-count">193</span></button></div>
+      </div>
+      <div class="art-card" id="art-curious-eyes" data-tag="nature" data-description="A portrait of a neighborhood cat who insists on supervising every painting session." data-posted="30 Mar 2026, 7:05 PM IST">
+        <div class="art-thumb" style="background:#f0ede4"><svg viewBox="0 0 100 100"><circle cx="50" cy="55" r="26" fill="#cbb994"/><polygon points="34,35 40,15 48,34" fill="#cbb994"/><polygon points="66,35 60,15 52,34" fill="#cbb994"/><circle cx="42" cy="52" r="3" fill="#111"/><circle cx="58" cy="52" r="3" fill="#111"/></svg></div>
+        <div class="art-meta"><div><div class="art-title">Curious Eyes</div><div class="art-author">by MoonlightArt</div></div><button class="like-btn" data-id="art-curious-eyes"><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9C0.5 8 2 4 6 4c2.2 0 3.8 1.3 6 3.7C14.2 5.3 15.8 4 18 4c4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg><span class="like-count">358</span></button></div>
+      </div>
+      <div class="art-card" id="art-endless-skies" data-tag="nature" data-description="Rolling clouds over open farmland, captured just before a summer storm." data-posted="5 Aug 2026, 5:52 PM IST">
+        <div class="art-thumb" style="background:#e4f0f2"><svg viewBox="0 0 100 100"><rect y="60" width="100" height="40" fill="#8fc48a"/><ellipse cx="30" cy="35" rx="20" ry="12" fill="#fff"/><ellipse cx="65" cy="30" rx="24" ry="14" fill="#fff"/></svg></div>
+        <div class="art-meta"><div><div class="art-title">Endless Skies</div><div class="art-author">by CloudyBrush</div></div><button class="like-btn" data-id="art-endless-skies"><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9C0.5 8 2 4 6 4c2.2 0 3.8 1.3 6 3.7C14.2 5.3 15.8 4 18 4c4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg><span class="like-count">421</span></button></div>
+      </div>
+      <div class="art-card" id="art-golden-hour" data-tag="digital" data-description="An abstract burst of warm tones exploring light at the end of the day." data-posted="11 Jun 2026, 8:20 PM IST">
+        <div class="art-thumb" style="background:#f4e9df"><svg viewBox="0 0 100 100"><polygon points="50,12 62,38 90,38 68,56 76,84 50,68 24,84 32,56 10,38 38,38" fill="#e0a23c"/></svg></div>
+        <div class="art-meta"><div><div class="art-title">Golden Hour</div><div class="art-author">by AmberInk</div></div><button class="like-btn" data-id="art-golden-hour"><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9C0.5 8 2 4 6 4c2.2 0 3.8 1.3 6 3.7C14.2 5.3 15.8 4 18 4c4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg><span class="like-count">297</span></button></div>
+      </div>
+      <div class="art-card" id="art-nightfall-bloom" data-tag="digital" data-description="Layered circles in cool violets, imagining flowers that only bloom after dark." data-posted="2 Jul 2026, 10:10 PM IST">
+        <div class="art-thumb" style="background:#e7e3f2"><svg viewBox="0 0 100 100"><circle cx="35" cy="60" r="18" fill="#8f7fc9"/><circle cx="60" cy="45" r="24" fill="#a996e0"/><circle cx="78" cy="70" r="12" fill="#6f5fae"/></svg></div>
+        <div class="art-meta"><div><div class="art-title">Nightfall Bloom</div><div class="art-author">by VelvetPetal</div></div><button class="like-btn" data-id="art-nightfall-bloom"><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9C0.5 8 2 4 6 4c2.2 0 3.8 1.3 6 3.7C14.2 5.3 15.8 4 18 4c4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg><span class="like-count">365</span></button></div>
+      </div>
+      <div class="art-card" id="art-mountain-sketchbook" data-tag="sketches" data-description="Field sketches from a three-day trek, inked and watercolored each evening." data-posted="19 Aug 2026, 6:35 PM IST">
+        <div class="art-thumb" style="background:#eef2df"><svg viewBox="0 0 100 100"><rect x="15" y="20" width="70" height="60" rx="6" fill="#fff"/><path d="M15 65 L38 42 L52 56 L68 34 L85 55 L85 80 L15 80 Z" fill="#7fae6f"/><circle cx="68" cy="34" r="7" fill="#f4c21b"/></svg></div>
+        <div class="art-meta"><div><div class="art-title">Mountain Sketchbook</div><div class="art-author">by TrailLines</div></div><button class="like-btn" data-id="art-mountain-sketchbook"><svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9C0.5 8 2 4 6 4c2.2 0 3.8 1.3 6 3.7C14.2 5.3 15.8 4 18 4c4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg><span class="like-count">248</span></button></div>
+      </div>
+    </div>
+    <p class="no-results" id="noResults">No art found. Try a different search or filter.</p>
+  </div>
+</section>
+
+<section class="community" id="community">
+  <div class="wrap">
+    <div class="community-top">
+      <div>
+        <div class="eyebrow">More than just a gallery</div>
+        <h2>A Creative Community</h2>
+        <p>Share your art, get inspired, join discussions, take part in events and grow together with people who love art as much as you do.</p>
+      </div>
+      <button class="btn btn-solid join-btn">Join now →</button>
+    </div>
+    <div class="feature-grid">
+      <div class="feature">
+        <svg class="ic" viewBox="0 0 24 24" fill="none"><path d="M4 20L18 6M18 6L13 6M18 6L18 11" stroke="var(--ink)" stroke-width="2"/></svg>
+        <h3>Share your art</h3>
+        <p>Showcase your work and get feedback from a community that cares.</p>
+      </div>
+      <div class="feature">
+        <svg class="ic" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="9" r="3" stroke="var(--ink)" stroke-width="2"/><circle cx="16" cy="9" r="3" stroke="var(--ink)" stroke-width="2"/><path d="M2 20c0-3 3-5 6-5s6 2 6 5M10 20c0-3 3-5 6-5s6 2 6 5" stroke="var(--ink)" stroke-width="2"/></svg>
+        <h3>Meet creators</h3>
+        <p>Connect with artists from around the world who share your passion.</p>
+      </div>
+      <div class="feature">
+        <svg class="ic" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="var(--ink)" stroke-width="2"/><path d="M3 9h18M8 3v4M16 3v4" stroke="var(--ink)" stroke-width="2"/></svg>
+        <h3>Join events</h3>
+        <p>Take part in challenges, contests and creative meetups.</p>
+      </div>
+      <div class="feature">
+        <svg class="ic" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.5-9.5-9C0.5 8 2 4 6 4c2.2 0 3.8 1.3 6 3.7C14.2 5.3 15.8 4 18 4c4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z" stroke="var(--ink)" stroke-width="2"/></svg>
+        <h3>Get inspired</h3>
+        <p>Discover new styles, ideas and artists you haven't seen before.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-grid">
+    <div>
+      <div class="footer-logo">
+        <svg viewBox="0 0 24 24" fill="none" width="26" height="26"><path d="M4 20L18 6M18 6L13 6M18 6L18 11" stroke="var(--pink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Alphonse
+      </div>
+      <p class="about">A home for every artist, from beginners to professionals.</p>
+      <div class="social-icons">
+        <span>D</span><span>I</span><span>X</span><span>Y</span><span>P</span>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Quick links</h4>
+      <a href="index.html">Home</a><a href="gallery.html">Gallery</a><a href="index.html#community">Community</a><a href="#">Events</a><a href="#">About</a>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <a href="#">Help center</a><a href="#">Terms of service</a><a href="#">Privacy policy</a><a href="#">Contact us</a>
+    </div>
+    <div class="footer-col">
+      <h4>Stay updated</h4>
+      <p style="color:#a49f8e; font-size:.88rem; margin-bottom:6px;">Get the latest art, events and community updates straight to your inbox.</p>
+      <div class="subscribe">
+        <input type="email" placeholder="Your email address">
+        <button>➜</button>
+      </div>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© 2026 Alphonse. All rights reserved.</span>
+    <span>Keep creating ♡</span>
+  </div>
+</footer>
+
+<div class="art-modal-overlay" id="artModalOverlay">
+  <div class="art-modal">
+    <button class="art-modal-close" id="artModalClose" aria-label="Close">✕</button>
+    <div class="art-modal-media" id="artModalMedia"></div>
+    <div class="art-modal-body">
+      <div class="art-modal-header">
+        <div>
+          <h3 id="artModalTitle"></h3>
+          <div class="art-modal-meta">
+            <span class="art-modal-author-avatar" id="artModalAvatar"></span>
+            <div>
+              <div class="art-modal-author" id="artModalAuthor"></div>
+              <div class="art-modal-date" id="artModalDate"></div>
+            </div>
+          </div>
+        </div>
+        <span class="art-modal-tag" id="artModalTag"></span>
+      </div>
+      <p class="art-modal-desc" id="artModalDesc"></p>
+      <div class="art-modal-actions">
+        <button class="modal-action like-action" id="modalLikeBtn">
+          <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9C0.5 8 2 4 6 4c2.2 0 3.8 1.3 6 3.7C14.2 5.3 15.8 4 18 4c4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          <span id="modalLikeCount"></span>
+        </button>
+        <button class="modal-action" id="modalCommentBtn">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke="currentColor" stroke-width="1.8"/></svg>
+          <span id="modalCommentLabel">Comment</span>
+        </button>
+        <button class="modal-action report-action" id="modalReportBtn">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 17h.01M10.3 3.9L2.8 17a1.8 1.8 0 0 0 1.5 2.7h15.4a1.8 1.8 0 0 0 1.5-2.7L13.7 3.9a1.8 1.8 0 0 0-3.4 0z" stroke="currentColor" stroke-width="1.8"/></svg>
+          <span id="modalReportLabel">Report</span>
+        </button>
+      </div>
+      <div class="art-modal-comment-box" id="modalCommentBox">
+        <div class="comment-list" id="modalCommentList"></div>
+        <textarea placeholder="Add a comment..." id="modalCommentInput"></textarea>
+        <button id="modalCommentSubmit">Post</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="art-modal-overlay" id="artModalOverlay">
+  <div class="art-modal" id="artModal">
+    <button class="art-modal-close" id="artModalClose" aria-label="Close">✕</button>
+    <div class="art-modal-media" id="artModalMedia"></div>
+    <div class="art-modal-body">
+      <div class="art-modal-top">
+        <div>
+          <h3 id="artModalTitle"></h3>
+          <div class="art-modal-author">
+            <span class="avatar" id="artModalAvatar"></span>
+            <span id="artModalAuthor"></span>
+          </div>
+        </div>
+        <button class="like-btn modal-like" id="artModalLike">
+          <svg class="heart-icon" viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.5-9C0.5 8 2 4 6 4c2.2 0 3.8 1.3 6 3.7C14.2 5.3 15.8 4 18 4c4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg>
+          <span class="like-count" id="artModalLikeCount"></span>
+        </button>
+      </div>
+      <p class="art-modal-desc" id="artModalDesc"></p>
+      <div class="art-modal-meta">
+        <span id="artModalPosted"></span>
+        <span class="art-modal-tag" id="artModalTag"></span>
+      </div>
+      <div class="art-modal-actions">
+        <button class="modal-action-btn" id="artModalCommentToggle">💬 Comment</button>
+        <button class="modal-action-btn" id="artModalReport">🚩 Report</button>
+      </div>
+      <div class="art-modal-comments" id="artModalComments">
+        <div class="comment-list" id="commentList"></div>
+        <div class="comment-input-row">
+          <input type="text" id="commentInput" placeholder="Add a comment...">
+          <button id="commentSend">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const ART_DATA = [
+    {id:'art-quiet-thoughts', title:'Quiet Thoughts', author:'LithaSketches', tag:'sketches', color:'#efe3e0'},
+    {id:'art-hidden-lake', title:'Hidden Lake', author:'ArteMori', tag:'nature', color:'#dcecef'},
+    {id:'art-the-lost-princess', title:'The Lost Princess', author:'KazeDraws', tag:'anime', color:'#f3e6ee'},
+    {id:'art-in-the-details', title:'In the Details', author:'PencilSoul', tag:'portraits', color:'#eee9df'},
+    {id:'art-old-town-vibes', title:'Old Town Vibes', author:'SketchyRin', tag:'illustrations', color:'#f2ece0'},
+    {id:'art-simple-beauty', title:'Simple Beauty', author:'LeafArt', tag:'illustrations', color:'#fdf1e6'},
+    {id:'art-curious-eyes', title:'Curious Eyes', author:'MoonlightArt', tag:'nature', color:'#f0ede4'},
+    {id:'art-endless-skies', title:'Endless Skies', author:'CloudyBrush', tag:'nature', color:'#e4f0f2'},
+    {id:'art-golden-hour', title:'Golden Hour', author:'AmberInk', tag:'digital', color:'#f4e9df'},
+    {id:'art-nightfall-bloom', title:'Nightfall Bloom', author:'VelvetPetal', tag:'digital', color:'#e7e3f2'},
+    {id:'art-mountain-sketchbook', title:'Mountain Sketchbook', author:'TrailLines', tag:'sketches', color:'#eef2df'},
+    {id:'art-rosewater', title:'Rosewater', author:'SoftlyDrawn', tag:'portraits', color:'#fbe8ec'},
+    {id:'art-the-old-pine', title:'The Old Pine', author:'ForestFolk', tag:'nature', color:'#e3ece5'},
+    {id:'art-orbit-study', title:'Orbit Study', author:'LineAndForm', tag:'digital', color:'#ede4f5'},
+    {id:'art-little-fox', title:'Little Fox', author:'InkAndPaws', tag:'illustrations', color:'#fdf0df'},
+    {id:'art-tide-line', title:'Tide Line', author:'SaltAndInk', tag:'nature', color:'#e2eff2'},
+    {id:'art-portrait-study-no-4', title:'Portrait Study No.4', author:'CharcoalKid', tag:'portraits', color:'#f5e9e2'},
+    {id:'art-rolling-fields', title:'Rolling Fields', author:'MorningBrush', tag:'nature', color:'#eaf2e0'}
+  ];
+
+  let activeFilter = 'all';
+  let currentMatches = [];
+
+  function applyFilters(){
+    const term = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+    let visibleCount = 0;
+    document.querySelectorAll('.art-card').forEach(card => {
+      const tag = card.dataset.tag || '';
+      const title = card.querySelector('.art-title')?.textContent.toLowerCase() || '';
+      const author = card.querySelector('.art-author')?.textContent.toLowerCase() || '';
+      const matchesFilter = activeFilter === 'all' || tag === activeFilter;
+      const matchesSearch = term === '' || title.includes(term) || author.includes(term) || tag.includes(term);
+      const show = matchesFilter && matchesSearch;
+      card.classList.toggle('hide', !show);
+      if(show) visibleCount++;
+    });
+    const noResults = document.getElementById('noResults');
+    if(noResults) noResults.classList.toggle('show', visibleCount === 0);
+  }
+
+  document.querySelectorAll('.filters button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filters button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = btn.dataset.filter;
+      applyFilters();
+    });
+  });
+
+  const searchToggle = document.getElementById('searchToggle');
+  const searchBar = document.getElementById('searchBar');
+  const searchInput = document.getElementById('searchInput');
+  const searchSuggestions = document.getElementById('searchSuggestions');
+
+  function renderSuggestions(term){
+    if(!searchSuggestions) return;
+    if(!term){
+      searchSuggestions.classList.remove('show');
+      searchSuggestions.innerHTML = '';
+      currentMatches = [];
+      return;
+    }
+    currentMatches = ART_DATA.filter(a =>
+      a.title.toLowerCase().includes(term) ||
+      a.author.toLowerCase().includes(term) ||
+      a.tag.includes(term)
+    ).slice(0, 6);
+
+    if(currentMatches.length === 0){
+      searchSuggestions.innerHTML = '<div class="suggestion-empty">No matches found</div>';
+    } else {
+      searchSuggestions.innerHTML = currentMatches.map(a => `
+        <div class="suggestion-item" data-id="${a.id}">
+          <span class="suggestion-swatch" style="background:${a.color}"></span>
+          <span class="suggestion-text"><span class="s-title">${a.title}</span><span class="s-meta">by ${a.author} · ${a.tag}</span></span>
+        </div>`).join('');
+      searchSuggestions.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', () => goToArt(item.dataset.id));
+      });
+    }
+    searchSuggestions.classList.add('show');
+  }
+
+  function goToArt(id){
+    const el = document.getElementById(id);
+    if(el){
+      if(searchBar) searchBar.classList.remove('open');
+      if(searchSuggestions) searchSuggestions.classList.remove('show');
+      if(searchInput) searchInput.value = '';
+      el.scrollIntoView({behavior:'smooth', block:'center'});
+      el.classList.add('highlight');
+      setTimeout(() => el.classList.remove('highlight'), 2200);
+      history.replaceState(null, '', '#' + id);
+    } else {
+      window.location.href = 'gallery.html#' + id;
+    }
+  }
+
+  if(searchToggle && searchBar){
+    searchToggle.addEventListener('click', () => {
+      searchBar.classList.toggle('open');
+      if(searchBar.classList.contains('open')) searchInput.focus();
+      else { searchSuggestions.classList.remove('show'); }
+    });
+  }
+
+  if(searchInput){
+    searchInput.addEventListener('input', () => {
+      applyFilters();
+      renderSuggestions(searchInput.value.trim().toLowerCase());
+    });
+    searchInput.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        if(currentMatches.length > 0) goToArt(currentMatches[0].id);
+      }
+    });
+  }
+
+  document.addEventListener('click', (e) => {
+    if(searchBar && !searchBar.contains(e.target) && e.target !== searchToggle && !searchToggle?.contains(e.target)){
+      if(searchSuggestions) searchSuggestions.classList.remove('show');
+    }
+  });
+  // ---------- LIKE BUTTONS (grid) ----------
+  document.querySelectorAll('.gallery-grid .like-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const countEl = btn.querySelector('.like-count');
+      let count = parseInt(countEl.textContent, 10);
+      if(isNaN(count)) count = 0;
+      const liked = btn.classList.toggle('liked');
+      count = liked ? count + 1 : count - 1;
+      countEl.textContent = count;
+    });
+  });
+
+  // ---------- ART DETAIL MODAL ----------
+  const AVATAR_COLORS = ['#E23E78', '#26A9BC', '#F2BF2E', '#8a6bb0', '#5f9670', '#c98d6f'];
+  function colorFor(name){
+    let hash = 0;
+    for(let i=0;i<name.length;i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+  }
+  function initialsFor(name){
+    return name.trim().split(/\s+/).map(w => w[0]).slice(0,2).join('').toUpperCase();
+  }
+
+  const artModalOverlay = document.getElementById('artModalOverlay');
+  const artModalClose = document.getElementById('artModalClose');
+  const artModalMedia = document.getElementById('artModalMedia');
+  const artModalTitle = document.getElementById('artModalTitle');
+  const artModalAuthor = document.getElementById('artModalAuthor');
+  const artModalAvatar = document.getElementById('artModalAvatar');
+  const artModalDesc = document.getElementById('artModalDesc');
+  const artModalPosted = document.getElementById('artModalPosted');
+  const artModalTag = document.getElementById('artModalTag');
+  const artModalLike = document.getElementById('artModalLike');
+  const artModalLikeCount = document.getElementById('artModalLikeCount');
+  const artModalCommentToggle = document.getElementById('artModalCommentToggle');
+  const artModalComments = document.getElementById('artModalComments');
+  const commentList = document.getElementById('commentList');
+  const commentInput = document.getElementById('commentInput');
+  const commentSend = document.getElementById('commentSend');
+  const artModalReport = document.getElementById('artModalReport');
+
+  let activeCardBtn = null;
+
+  function openArtModal(card){
+    const titleEl = card.querySelector('.art-title');
+    const authorEl = card.querySelector('.art-author');
+    const thumb = card.querySelector('.art-thumb');
+    const likeBtn = card.querySelector('.like-btn');
+    if(!titleEl || !thumb || !likeBtn) return;
+
+    const authorName = authorEl.textContent.replace(/^by\s+/i, '');
+    const desc = card.dataset.description || 'No description provided for this piece yet.';
+    const posted = card.dataset.posted || '';
+    const tag = card.dataset.tag || '';
+
+    artModalTitle.textContent = titleEl.textContent;
+    artModalAuthor.textContent = authorEl.textContent;
+    artModalAvatar.textContent = initialsFor(authorName);
+    artModalAvatar.style.background = colorFor(authorName);
+    artModalDesc.textContent = desc;
+    artModalPosted.textContent = posted ? `Posted ${posted}` : '';
+    artModalTag.textContent = tag;
+    artModalMedia.innerHTML = thumb.innerHTML;
+    artModalMedia.style.background = thumb.style.background || '#f0ede4';
+
+    const liked = likeBtn.classList.contains('liked');
+    const count = likeBtn.querySelector('.like-count').textContent;
+    artModalLike.classList.toggle('liked', liked);
+    artModalLikeCount.textContent = count;
+
+    artModalComments.classList.remove('show');
+    commentList.innerHTML = '';
+    commentInput.value = '';
+    artModalReport.classList.remove('reported');
+    artModalReport.textContent = '🚩 Report';
+
+    activeCardBtn = likeBtn;
+    artModalOverlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeArtModal(){
+    artModalOverlay.classList.remove('show');
+    document.body.style.overflow = '';
+    activeCardBtn = null;
+  }
+
+  document.querySelectorAll('.art-card').forEach(card => {
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', (e) => {
+      if(e.target.closest('.like-btn')) return;
+      openArtModal(card);
+    });
+  });
+
+  artModalClose.addEventListener('click', closeArtModal);
+  artModalOverlay.addEventListener('click', (e) => {
+    if(e.target === artModalOverlay) closeArtModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape' && artModalOverlay.classList.contains('show')) closeArtModal();
+  });
+
+  artModalLike.addEventListener('click', () => {
+    const liked = artModalLike.classList.toggle('liked');
+    let count = parseInt(artModalLikeCount.textContent, 10);
+    if(isNaN(count)) count = 0;
+    count = liked ? count + 1 : count - 1;
+    artModalLikeCount.textContent = count;
+    if(activeCardBtn){
+      activeCardBtn.classList.toggle('liked', liked);
+      activeCardBtn.querySelector('.like-count').textContent = count;
+    }
+  });
+
+  artModalCommentToggle.addEventListener('click', () => {
+    artModalComments.classList.toggle('show');
+  });
+
+  function addComment(name, text){
+    const item = document.createElement('div');
+    item.className = 'comment-item';
+    item.innerHTML = `<span class="avatar" style="background:${colorFor(name)}">${initialsFor(name)}</span>
+      <span class="c-body"><span class="c-name">${name}</span>${text}</span>`;
+    commentList.appendChild(item);
+  }
+
+  commentSend.addEventListener('click', () => {
+    const text = commentInput.value.trim();
+    if(!text) return;
+    addComment('You', text);
+    commentInput.value = '';
+    commentList.scrollTop = commentList.scrollHeight;
+  });
+  commentInput.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter'){ e.preventDefault(); commentSend.click(); }
+  });
+
+  artModalReport.addEventListener('click', () => {
+    if(artModalReport.classList.contains('reported')) return;
+    artModalReport.classList.add('reported');
+    artModalReport.textContent = '✓ Reported';
+  });
+</script>
+</body>
+</html>
